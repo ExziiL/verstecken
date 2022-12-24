@@ -1,9 +1,13 @@
-import { useState } from 'react';
 import './App.css';
-import reactLogo from './assets/react.svg';
+import Map from './components/Map/Map';
 
 function App() {
-	return <div className="App">Hello World!</div>;
+	return (
+		<div className="App">
+			<h1>Hello World</h1>
+			<Map />
+		</div>
+	);
 }
 
 export default App;
