@@ -3,9 +3,10 @@ import 'leaflet/dist/leaflet.css';
 import { MapContainer, Marker, Popup, TileLayer, useMap } from 'react-leaflet';
 import './Map.css';
 
+import { Users } from '../User/Users';
 import BoundingRectangle from './BoundingRectangle/BoundingRectangle';
 
-const defaultCenter: LatLngExpression = [48.84082223540835, 10.06707360335071];
+const defaultCenter: LatLngExpression = [48.84092223540835, 10.06756360335071];
 const defaultZoom = 17;
 
 const Map = () => {
@@ -15,13 +16,14 @@ const Map = () => {
 				id="map"
 				center={defaultCenter}
 				zoom={defaultZoom}
-				// scrollWheelZoom={false}
+				scrollWheelZoom={true}
 			>
 				<TileLayer
 					attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 					url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
 				/>
 				<BoundingRectangle />
+				<Users />
 			</MapContainer>
 		</div>
 	);
