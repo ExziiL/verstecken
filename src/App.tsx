@@ -1,11 +1,13 @@
 import './App.css';
+import Login from './components/Login/Login';
 import Map from './components/Map/Map';
 
 function App() {
 	return (
 		<div className="App">
 			<h1>Hello World</h1>
-			<Map />
+			<Login />
+			{/* <Map /> */}
 		</div>
 	);
 }
