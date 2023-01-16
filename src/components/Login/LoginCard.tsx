@@ -4,16 +4,15 @@ import { useAuth } from '../../context/AuthContext';
 
 import Button from '../atoms/Button';
 import Label from '../atoms/Label';
-import Signup from './Signup';
+import Login from './Login';
 
-function SignupCard() {
+function LoginCard() {
 	const emailRef = useRef<any>();
 	const passwordRef = useRef<any>();
-	const passwordConfirmRef = useRef<any>();
 
 	const navigate = useNavigate();
 
-	const { signup } = useAuth();
+	const { login } = useAuth();
 
 	const [error, setError] = useState('');
 	const [loading, setLoading] = useState(false);
@@ -21,18 +20,14 @@ function SignupCard() {
 	async function handleSubmit(e: any) {
 		e.preventDefault();
 
-		if (passwordRef.current.value !== passwordConfirmRef.current.value) {
-			return setError('Passwords do not match');
-		}
-
 		try {
 			setError('');
 			setLoading(true);
-			await signup(emailRef.current.value, passwordRef.current.value);
+			await login(emailRef.current.value, passwordRef.current.value);
 			navigate('/');
 		} catch (err) {
 			console.error(err);
-			setError('Failed to create an account');
+			setError('Failed to sign in');
 		}
 
 		setLoading(false);
@@ -40,7 +35,7 @@ function SignupCard() {
 
 	return (
 		<div className="mb-4">
-			<h1 className="text-center m-10 text-4xl">Registrieren</h1>
+			<h1 className="text-center m-10 text-4xl">Anmelden</h1>
 			{error && <div className="bg-red-600 text-xl p-4 text-white mb-6">Error: {error}</div>}
 			<form onSubmit={handleSubmit}>
 				<Label
@@ -57,20 +52,13 @@ function SignupCard() {
 					name="password"
 					ref={passwordRef}
 				/>
-				<Label
-					id="password-confirm"
-					header="Passwort bestätigen"
-					type="password"
-					name="password-confirm"
-					ref={passwordConfirmRef}
-				/>
 				<Button
 					disabled={loading}
-					text="Sign Up"
+					text="Login"
 				/>
 			</form>
 		</div>
 	);
 }
 
-export default SignupCard;
+export default LoginCard;

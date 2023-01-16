@@ -11,7 +11,7 @@ export interface IUser {
 const User: FC<IUser> = ({ color, player, isSearching }) => {
 	// get users Location
 	const [location, setLocation] = useState<any[]>([0, 0]);
-	const [watchId, setWatchId] = useState<any>(null);
+	const [watchId, setWatchId] = useState<any>();
 
 	useEffect(() => {
 		const id: any = navigator.geolocation.watchPosition(
@@ -19,7 +19,8 @@ const User: FC<IUser> = ({ color, player, isSearching }) => {
 				setLocation([position.coords.latitude, position.coords.longitude]);
 			},
 			(error) => {
-				console.log(error);
+				//TODO bessere Errorausgabe in den Geoinf-Unterlagen
+				console.error(error);
 			}
 		);
 		setWatchId(id);

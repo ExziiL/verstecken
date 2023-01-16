@@ -7,6 +7,11 @@ export const Users = () => {
 			color: 'black',
 			isSearching: false,
 		},
+		{
+			name: 'John',
+			color: 'yellow',
+			isSearching: false,
+		},
 		// {
 		// 	name: 'Laura',
 		// 	color: 'green',
