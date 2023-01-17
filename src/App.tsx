@@ -5,6 +5,7 @@ import Dashboard from './components/Dashboard/Dashboard';
 import Login from './components/Login/Login';
 import PlayingScreen from './components/PlayingScreen/PlayingScreen';
 import Signup from './components/Signup/Signup';
+import PrivateRoute from './components/wrapper/PrivateRoute/PrivateRoute';
 
 function App() {
 	return (
@@ -14,7 +15,7 @@ function App() {
 					<Routes>
 						<Route
 							path="/"
-							element={<PlayingScreen />}
+							element={<PrivateRoute component={PlayingScreen} />}
 						/>
 						<Route
 							path="/signup"

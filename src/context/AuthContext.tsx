@@ -9,6 +9,7 @@ export interface IAuthProvider {
 export interface IAuthContext {
 	signup: any;
 	login: any;
+	logout: any;
 	currentUser: User | null;
 }
 
@@ -30,6 +31,10 @@ export const AuthProvider: FC<IAuthProvider> = ({ children }) => {
 		return signInWithEmailAndPassword(auth, email, password);
 	}
 
+	function logout() {
+		return auth.signOut();
+	}
+
 	useEffect(() => {
 		const unsubscribe = auth.onAuthStateChanged((user) => {
 			setCurrentUser(user);
@@ -42,6 +47,7 @@ export const AuthProvider: FC<IAuthProvider> = ({ children }) => {
 		currentUser,
 		login,
 		signup,
+		logout,
 	};
 
 	return <AuthContext.Provider value={value}>{!loading && children}</AuthContext.Provider>;
