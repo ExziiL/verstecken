@@ -1,13 +1,33 @@
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { AuthProvider } from '../src/context/AuthContext';
 import './App.css';
+import Dashboard from './components/Dashboard/Dashboard';
 import Login from './components/Login/Login';
-import Map from './components/Map/Map';
+import PlayingScreen from './components/PlayingScreen/PlayingScreen';
+import Signup from './components/Signup/Signup';
+import PrivateRoute from './components/wrapper/PrivateRoute/PrivateRoute';
 
 function App() {
 	return (
 		<div className="App">
-			<h1>Hello World</h1>
-			<Login />
-			{/* <Map /> */}
+			<Router>
+				<AuthProvider>
+					<Routes>
+						<Route
+							path="/"
+							element={<PrivateRoute component={PlayingScreen} />}
+						/>
+						<Route
+							path="/signup"
+							element={<Signup />}
+						/>
+						<Route
+							path="/login"
+							element={<Login />}
+						/>
+					</Routes>
+				</AuthProvider>
+			</Router>
 		</div>
 	);
 }
