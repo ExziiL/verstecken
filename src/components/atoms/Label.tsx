@@ -12,7 +12,7 @@ const Label = React.forwardRef<HTMLInputElement, ILabel>((props, ref) => {
 	return (
 		<label
 			id={props.id}
-			className="flex flex-col max-w-sm pb-4"
+			className="flex flex-col pb-4"
 		>
 			{props.header}:
 			<input

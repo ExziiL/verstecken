@@ -34,7 +34,7 @@ function LoginCard() {
 	}
 
 	return (
-		<div className="mb-4">
+		<div className="mb-4 max-w-sm">
 			<h1 className="text-center m-10 text-4xl">Anmelden</h1>
 			{error && <div className="bg-red-600 text-xl p-4 text-white mb-6">Error: {error}</div>}
 			<form onSubmit={handleSubmit}>
@@ -52,10 +52,12 @@ function LoginCard() {
 					name="password"
 					ref={passwordRef}
 				/>
-				<Button
-					disabled={loading}
-					text="Login"
-				/>
+				<div className="w-full">
+					<Button
+						disabled={loading}
+						text="Login"
+					/>
+				</div>
 			</form>
 		</div>
 	);
