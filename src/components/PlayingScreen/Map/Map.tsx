@@ -4,7 +4,7 @@ import { MapContainer, Marker, Popup, TileLayer, useMap } from 'react-leaflet';
 import './Map.css';
 
 import BoundingRectangle from './BoundingRectangle/BoundingRectangle';
-import { Users } from './User/Users';
+import { Users } from './User/AllUserCircles';
 
 const defaultCenter: LatLngExpression = [48.84092223540835, 10.06756360335071];
 const defaultZoom = 17;

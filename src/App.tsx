@@ -1,10 +1,10 @@
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import { AuthProvider } from '../src/context/AuthContext';
 import './App.css';
 import Login from './components/Login/Login';
 import PlayingScreen from './components/PlayingScreen/PlayingScreen';
 import Signup from './components/Signup/Signup';
 import PrivateRoute from './components/wrapper/PrivateRoute/PrivateRoute';
+import { AuthProvider } from './contexts/AuthContext';
 
 function App() {
 	return (

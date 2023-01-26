@@ -1,14 +1,12 @@
-import { Users } from '../Map/User/Users';
-
-import HidingPlayer from './HidingPlayer';
-import SeekingPlayer from './SeekingPlayer';
+import playerHandler from '../../containers/playerHandler';
+import { Users } from '../PlayingScreen/Map/User/AllUserCircles';
 
 const Players = () => {
 	const players = [
 		{
 			name: 'Andre',
 			color: 'black',
-			isSearching: false,
+			isSearching: true,
 		},
 		// 	{
 		// 		name: 'John',
@@ -26,6 +24,10 @@ const Players = () => {
 		// 		isSearching: true,
 		// 	},
 	];
+
+	// console.log(playerss);
+	playerHandler();
+
 	return (
 		<div>
 			{players &&
@@ -34,9 +36,6 @@ const Players = () => {
 						{player.name} {player.isSearching ? 'x' : null}
 					</div>
 				))}
-
-			<SeekingPlayer players={players} />
-			<HidingPlayer players={players} />
 		</div>
 	);
 };

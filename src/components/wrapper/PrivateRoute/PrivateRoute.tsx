@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import { Navigate } from 'react-router-dom';
-import { useAuth } from '../../../context/AuthContext';
+import { useAuth } from '../../../contexts/AuthContext';
 
 interface IPrivateRoute {
 	component: any;

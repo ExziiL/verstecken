@@ -23,12 +23,34 @@ export const AuthProvider: FC<IAuthProvider> = ({ children }) => {
 	const [currentUser, setCurrentUser] = useState<User | null>(null);
 	const [loading, setLoading] = useState<Boolean>(true);
 
-	function signup(email: string, password: string) {
-		return createUserWithEmailAndPassword(auth, email, password);
+	async function signup(email: string, password: string) {
+		try {
+			return await createUserWithEmailAndPassword(auth, email, password);
+		} catch (error: any) {
+			const errorCode = error.code;
+			const errorMessage = error.message;
+
+			console.log(errorCode, errorMessage);
+
+			if (errorCode === 'auth/weak-password') {
+				alert('The password is too weak.');
+			}
+		}
 	}
 
-	function login(email: string, password: string) {
-		return signInWithEmailAndPassword(auth, email, password);
+	async function login(email: string, password: string) {
+		try {
+			return await signInWithEmailAndPassword(auth, email, password);
+		} catch (error: any) {
+			const errorCode = error.code;
+			const errorMessage = error.message;
+
+			console.log(errorCode, errorMessage);
+
+			if (errorCode === 'auth/wrong-password') {
+				alert('Wrong password.');
+			}
+		}
 	}
 
 	function logout() {

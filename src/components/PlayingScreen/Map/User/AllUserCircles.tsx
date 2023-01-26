@@ -1,4 +1,4 @@
-import User from './User';
+import User from './UserCircle';
 
 export const Users = () => {
 	const users = [
