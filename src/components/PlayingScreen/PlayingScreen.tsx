@@ -9,7 +9,6 @@ const PlayingScreen = () => {
 			<Navbar />
 			<Map />
 			<CurrentUserInfo />
-			<Players />
 		</div>
 	);
 };

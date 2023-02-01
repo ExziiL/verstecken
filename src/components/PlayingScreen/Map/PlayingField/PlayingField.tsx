@@ -1,7 +1,7 @@
 import { LatLngBoundsExpression } from 'leaflet';
 import { Rectangle } from 'react-leaflet';
 
-const BoundingRectangle = () => {
+const PlayingField = () => {
 	const rectangle: LatLngBoundsExpression = [
 		[48.84019111595303, 10.066012753769945],
 		[48.84177180973673, 10.069215045354168],
@@ -17,4 +17,4 @@ const BoundingRectangle = () => {
 	);
 };
 
-export default BoundingRectangle;
+export default PlayingField;
