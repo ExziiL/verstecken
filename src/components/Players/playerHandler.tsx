@@ -1,6 +1,7 @@
 import { off, onChildAdded, onDisconnect, onValue, ref, remove, set } from 'firebase/database';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
+import { PlayerContext, PlayerProvider } from '../../contexts/PlayerContext';
 import { database } from '../../firebase';
 
 import UserCircle from './UserCircle';
@@ -26,9 +27,10 @@ const PlayerContainer = () => {
 		};
 	}, []);
 
+	console.log('ownLocation', ownLocation);
+
 	// --------------------------------------------- Player Handling ---------------------------------------------
-	// const [player, setPlayer] = useState<any>({});
-	const [players, setPlayers] = useState<any[]>([]);
+	let { players, setPlayers } = useContext(PlayerContext);
 	const { currentUser } = useAuth();
 
 	let playerId: string;
@@ -48,26 +50,6 @@ const PlayerContainer = () => {
 		};
 	}, []);
 
-	onChildAdded(allPlayersRef, (snapshot) => {
-		// fires when a new player is added
-		// const addedPlayer = snapshot.val();
-		// if (addedPlayer.id === playerId) {
-		// 	// I am the player
-		// 	// alert('You are the player!');
-		// }
-		// playerElements[addedPlayer.id] = (
-		// 	<UserCircle
-		// 		color={addedPlayer.color}
-		// 		playerName={addedPlayer.name}
-		// 		isSearching={addedPlayer.isSearching}
-		// 		latLongCoordinates={addedPlayer.latLongCoordinates}
-		// 		key={addedPlayer.id}
-		// 	/>
-		// );
-		// Set name here
-		// set player position here
-	});
-
 	const playerColors = ['blue', 'green', 'yellow', 'red', 'purple', 'orange', 'black', 'white'];
 
 	function randomFromArray(array: any[]) {
@@ -79,7 +61,7 @@ const PlayerContainer = () => {
 		disconnect.remove();
 	};
 
-	// Sync Player Data within Database
+	// --------------------------------------------- Sync Player Data within Database ---------------------------------------------
 	useEffect(() => {
 		if (currentUser) {
 			playerId = currentUser.uid;
@@ -97,21 +79,23 @@ const PlayerContainer = () => {
 		}
 	}, [ownLocation]);
 
-	if (players.length > 0) {
-		console.log('players', players);
-	}
+	// if (players.length > 0) {
+	// 	console.log('players', players);
+	// }
 
 	return (
 		<>
-			{players.map((player) => (
-				<UserCircle
-					color={player.color}
-					playerName={player.name}
-					isSearching={player.isSearching}
-					latLongCoordinates={player.latLongCoordinates}
-					key={player.id}
-				/>
-			))}
+			<PlayerProvider>
+				{players.map((player) => (
+					<UserCircle
+						color={player.color}
+						playerName={player.name}
+						isSearching={player.isSearching}
+						latLongCoordinates={player.latLongCoordinates}
+						key={player.id}
+					/>
+				))}
+			</PlayerProvider>
 		</>
 	);
 };

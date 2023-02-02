@@ -1,17 +1,17 @@
 import { LatLngBoundsExpression } from 'leaflet';
+import { FC } from 'react';
 import { Rectangle } from 'react-leaflet';
 
-const PlayingField = () => {
-	const rectangle: LatLngBoundsExpression = [
-		[48.84019111595303, 10.066012753769945],
-		[48.84177180973673, 10.069215045354168],
-	];
+interface IPlayingField {
+	boundingBoxRectangle: LatLngBoundsExpression;
+}
 
+const PlayingField: FC<IPlayingField> = ({ boundingBoxRectangle }) => {
 	const colorOptions = { color: 'black' };
 
 	return (
 		<Rectangle
-			bounds={rectangle}
+			bounds={boundingBoxRectangle}
 			pathOptions={colorOptions}
 		/>
 	);
