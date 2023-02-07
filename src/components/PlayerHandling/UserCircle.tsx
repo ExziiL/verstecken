@@ -14,13 +14,14 @@ const UserCircle: FC<IUserCircle> = ({ color, playerName, isSearching, latLongCo
 	const searchingColor = { color: 'red' };
 
 	return (
-		<div>
+		<div key={playerName}>
 			<Circle
 				center={latLongCoordinates as LatLngTuple}
 				pathOptions={isSearching ? searchingColor : fillColor}
 				radius={10}
 				stroke={true}
 				opacity={0.5}
+				key={playerName}
 			>
 				<Tooltip>{playerName}</Tooltip>
 			</Circle>

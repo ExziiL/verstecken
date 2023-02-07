@@ -1,4 +1,4 @@
-import { off, onChildAdded, onDisconnect, onValue, ref, remove, set } from 'firebase/database';
+import { off, onChildAdded, onDisconnect, onValue, ref, remove, set, update } from 'firebase/database';
 import React, { useContext, useEffect, useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { PlayerContext, PlayerProvider } from '../../contexts/PlayerContext';
@@ -25,9 +25,7 @@ const PlayerContainer = () => {
 		return () => {
 			navigator.geolocation.clearWatch(watchId);
 		};
-	}, []);
-
-	console.log('ownLocation', ownLocation);
+	}, [ownLocation]);
 
 	// --------------------------------------------- Player Handling ---------------------------------------------
 	let { players, setPlayers } = useContext(PlayerContext);
@@ -36,11 +34,18 @@ const PlayerContainer = () => {
 	let playerId: string;
 	let playerRef: any; // allows us to access and interact with the player's data in the database
 	let allPlayersRef = ref(database, 'players/');
-	let playerElements: any = {};
+
+	const playerColors = ['blue', 'green', 'yellow', 'purple', 'orange', 'black', 'white'];
+
+	function randomFromArray(array: any[]) {
+		return array[Math.floor(Math.random() * array.length)];
+	}
 
 	useEffect(() => {
 		const onValueHandler = (snapshot: any) => {
-			setPlayers(Object.values(snapshot.val()));
+			if (snapshot.val()) {
+				setPlayers(Object.values(snapshot.val()));
+			}
 		};
 
 		onValue(allPlayersRef, onValueHandler);
@@ -50,41 +55,70 @@ const PlayerContainer = () => {
 		};
 	}, []);
 
-	const playerColors = ['blue', 'green', 'yellow', 'red', 'purple', 'orange', 'black', 'white'];
-
-	function randomFromArray(array: any[]) {
-		return array[Math.floor(Math.random() * array.length)];
-	}
-
 	const handleDisconnect = (ref: any) => {
 		const disconnect = onDisconnect(ref);
 		disconnect.remove();
 	};
 
+	function setPlayerColor(playerId: string) {
+		let playerRef = ref(database, 'players/' + playerId);
+
+		// laufe über alle Spieler und setze die Farbe auf false
+		console.log('playerHandler players', players);
+
+		update(playerRef, {
+			color: 'white',
+			colorIsSet: true,
+		}).then(() => {
+			players.forEach((player) => {
+				console.log('player', player.color);
+			});
+		});
+	}
+
+	function updatePlayerLocation(playerId: string, latLongCoordinates: [number, number]) {
+		let playerRef = ref(database, 'players/' + playerId);
+
+		update(playerRef, {
+			latLongCoordinates: latLongCoordinates,
+		}).then(() => {
+			console.log('location set to ' + latLongCoordinates);
+		});
+	}
+
 	// --------------------------------------------- Sync Player Data within Database ---------------------------------------------
+
 	useEffect(() => {
 		if (currentUser) {
 			playerId = currentUser.uid;
 			playerRef = ref(database, 'players/' + playerId);
 
+			// set replaces the data at the specified location
 			set(playerRef, {
 				id: playerId,
 				name: currentUser.email,
 				isSearching: false,
-				color: randomFromArray(playerColors),
+				// color: setPlayerColor(playerId, randomFromArray(playerColors)),
+				// color: randomFromArray(playerColors),
 				latLongCoordinates: ownLocation,
+				colorIsSet: false,
 			});
+
+			// ! Hier war ich! die Farbe wird nicht gesetzt?
+			setPlayerColor(playerId);
 
 			handleDisconnect(playerRef);
 		}
-	}, [ownLocation]);
+		// ! welches von den beiden da unten ist richtig?
+		// }, [ownLocation]);
+	}, []);
 
 	// if (players.length > 0) {
 	// 	console.log('players', players);
 	// }
 
 	return (
-		<>
+		<React.Fragment key={currentUser?.uid}>
 			<PlayerProvider>
 				{players.map((player) => (
 					<UserCircle
@@ -96,7 +130,7 @@ const PlayerContainer = () => {
 					/>
 				))}
 			</PlayerProvider>
-		</>
+		</React.Fragment>
 	);
 };
 

@@ -26,7 +26,9 @@ export const PlayerProvider: FC<IPlayerProvider> = ({ children }: any) => {
 	useEffect(() => {
 		// -------------------------------------
 		onValue(allPlayersRef, (snapshot: any) => {
-			setPlayers(Object.values(snapshot.val()));
+			if (snapshot.val()) {
+				setPlayers(Object.values(snapshot.val()));
+			}
 		});
 
 		return () => {

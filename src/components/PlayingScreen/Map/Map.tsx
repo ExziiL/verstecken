@@ -9,8 +9,8 @@ import { PlayerContext } from '../../../contexts/PlayerContext';
 
 import PlayingField from './PlayingField/PlayingField';
 
-import playerHandler from '../../Players/playerHandler';
-import Players from '../../Players/Players';
+import Player from '../../PlayerHandling/Player';
+import Players from '../../PlayerHandling/Players';
 
 const Map = () => {
 	const { players } = useContext(PlayerContext);
@@ -42,7 +42,7 @@ const Map = () => {
 				/>
 				<PlayingField boundingBoxRectangle={playingFieldBorder} />
 
-				<Players />
+				<Player />
 			</MapContainer>
 		</div>
 	);
