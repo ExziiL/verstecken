@@ -19,7 +19,22 @@ const Player = () => {
 
 	const playerColors = ['blue', 'green', 'pink', 'yellow', 'purple', 'orange', 'black'];
 
-	/* ----------------------------------- add player to database and set color --------------------------------------- */
+	/* get all player from database and write them to my players context, set appropriate colors */
+	useEffect(() => {
+		console.log('playerLocationRef: ', playerLocationRef);
+		onValue(allPlayersRef, (snapshot) => {
+			if (snapshot.val()) {
+				setPlayers(Object.values(snapshot.val()));
+				setPlayerColor();
+			}
+		});
+
+		return () => {
+			off(allPlayersRef);
+		};
+	}, [playerLocation, currentUser]);
+
+	/* ----------------------------------- add player to database --------------------------------------- */
 	useEffect(() => {
 		if (currentUser) {
 			const playerRef = ref(database, 'players/' + currentUser.uid);
@@ -37,20 +52,22 @@ const Player = () => {
 					});
 				}
 			});
+
 			handleDisconnect(playerRef);
 		}
-	}, [playerIdRef, currentUser]); // Hier ein argument hinzufügen? davor war es [currentUser]
+	}, [playerIdRef]); // Hier ein argument hinzufügen? davor war es [currentUser]
 
 	const handleDisconnect = (ref: any) => {
 		const disconnect = onDisconnect(ref);
 		disconnect.remove();
 	};
 
-	function setPlayerColor(givenPlayers: any) {
-		const currentPlayer = givenPlayers.find((player: any) => player.id === currentUser?.uid);
+	/* ----------------------------------- determine player color ---------------------------------------- */
+	function setPlayerColor() {
+		const currentPlayer = players.find((player) => player.id === currentUser?.uid);
 
 		if (!currentPlayer?.colorIsSet) {
-			const usedColors = givenPlayers.map((player: any) => player.color);
+			const usedColors = players.map((player) => player.color);
 			const availableColors = playerColors.filter((color) => !usedColors.includes(color));
 
 			if (availableColors.length > 0) {
@@ -62,29 +79,27 @@ const Player = () => {
 		}
 	}
 
-	/* get all player from database and write them to my players context */
 	useEffect(() => {
-		onValue(allPlayersRef, (snapshot) => {
-			if (snapshot.val()) {
-				setPlayers(Object.values(snapshot.val()));
-				setPlayerColor(players);
-			}
-		});
+		const currentPlayer = players.find((player) => player.id === currentUser?.uid);
 
-		return () => {
-			off(allPlayersRef);
-		};
-	}, [playerLocation, currentUser]);
+		if (!currentPlayer?.colorIsSet) {
+			setPlayerColor();
+		}
+	}, [players, currentUser, playerIdRef]);
 
 	/* ----------------------------------- update player location ---------------------------------------- */
 	useEffect(() => {
 		const id: any = navigator.geolocation.watchPosition(
 			(position: any) => {
+				// console.log('location before: ', playerLocation);
 				setPlayerLocation([position.coords.latitude, position.coords.longitude]);
+				// console.log('location after: ', playerLocation);
 
 				update(playerIdRef, {
 					latLongCoordinates: playerLocation,
-				}).then(() => {});
+				}).then(() => {
+					// console.log('location updated: ', playerLocation);
+				});
 			},
 			(error) => {
 				//TODO bessere Errorausgabe in den Geoinf-Unterlagen
@@ -99,19 +114,20 @@ const Player = () => {
 		};
 	}, [playerLocation, currentUser]);
 
-	// TODO: 1. Farbe der UserCircle Component dynamisch setzen, funktioniert schon wieder nicht ._.
+	// TODO: 1. Artikel zu React key durchlesen: https://beta.reactjs.org/learn/rendering-lists
+	// TODO: 2. Key in UserCircle Component hinzufügen
+	// TODO: 3. Farbe der UserCircle Component dynamisch setzen, funktioniert schon wieder nicht ._.
 	return (
 		<PlayerProvider>
 			<div>
 				{players.map((player) => (
-					<div key={player.id}>
-						<UserCircle
-							color={player.color}
-							playerName={player.name}
-							isSearching={player.isSearching}
-							latLongCoordinates={player.latLongCoordinates}
-						/>
-					</div>
+					<UserCircle
+						color={player.color}
+						playerName={player.name}
+						isSearching={player.isSearching}
+						latLongCoordinates={player.latLongCoordinates}
+						key={player.id}
+					/>
 				))}
 			</div>
 		</PlayerProvider>
