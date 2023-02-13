@@ -3,7 +3,8 @@ import React, { createContext, FC, ReactNode, useEffect, useState } from 'react'
 
 interface IGameContext {
 	seconds: number;
-	setSeconds: React.Dispatch<React.SetStateAction<any>>;
+	gameRunning: boolean;
+	setGameRunning: React.Dispatch<React.SetStateAction<any>>;
 }
 
 interface IGameProvider {
@@ -12,11 +13,13 @@ interface IGameProvider {
 
 export const GameContext = createContext<IGameContext>({
 	seconds: 0,
-	setSeconds: () => {},
+	gameRunning: false,
+	setGameRunning: () => {},
 } as IGameContext);
 
 export const GameProvider: FC<IGameProvider> = ({ children }: any) => {
 	const [seconds, setSeconds] = useState(0);
+	const [gameRunning, setGameRunning] = useState(false);
 
 	const database = getDatabase();
 	const gameRef = ref(database, 'game/');
@@ -26,25 +29,28 @@ export const GameProvider: FC<IGameProvider> = ({ children }: any) => {
 			if (!snapshot.exists()) {
 				set(gameRef, {
 					gameRunning: false,
-					timePlayed: seconds,
+					seconds: seconds,
 				});
 			} else {
-				const data = snapshot.val();
-				setSeconds(data.timePlayed);
+				const { seconds, gameRunning } = snapshot.val();
+				setSeconds(seconds);
+				setGameRunning(gameRunning);
 			}
 		});
 	}, []);
 
 	useEffect(() => {
-		const intervalId = setInterval(() => {
-			update(gameRef, {
-				gameRunning: true,
-				timePlayed: seconds + 1,
-			});
-		}, 1000);
+		if (gameRunning) {
+			const intervalId = setInterval(() => {
+				update(gameRef, {
+					gameRunning: true,
+					seconds: seconds + 1,
+				});
+			}, 1000);
 
-		return () => clearInterval(intervalId);
-	}, [seconds]);
+			return () => clearInterval(intervalId);
+		}
+	}, [seconds, gameRunning]);
 
-	return <GameContext.Provider value={{ seconds, setSeconds }}>{children}</GameContext.Provider>;
+	return <GameContext.Provider value={{ seconds, gameRunning, setGameRunning }}>{children}</GameContext.Provider>;
 };

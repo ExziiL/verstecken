@@ -61,21 +61,6 @@ const Player = () => {
 		}
 	}
 
-	// ----------------------------------- set Player Searching ----------------------------------------
-	function setPlayerIsSearching() {
-		if (players.length > 0 && players[0].id === currentUser?.uid && !players[0].isSearching) {
-			const firstPlayerRef = ref(database, 'players/' + players[0].id);
-
-			update(firstPlayerRef, {
-				isSearching: true,
-			});
-		}
-	}
-
-	useEffect(() => {
-		setPlayerIsSearching();
-	}, [players, allPlayersRef]);
-
 	/* ----------------- get all player from database and write them to my players context --------------- */
 	useEffect(() => {
 		onValue(allPlayersRef, (snapshot) => {
