@@ -10,7 +10,6 @@ import { PlayerContext } from '../../../contexts/PlayerContext';
 import PlayingField from './PlayingField/PlayingField';
 
 import Player from '../../PlayerHandling/Player';
-import Players from '../../PlayerHandling/Players';
 
 const Map = () => {
 	const { players } = useContext(PlayerContext);

@@ -1,4 +1,4 @@
-import { PlayerProvider } from '../../contexts/PlayerContext';
+import StartGame from '../GameHandling/StartGame';
 import Navbar from '../globals/Navbar/Navbar';
 import CurrentUserInfo from './CurrentUserInfo/CurrentUserInfo';
 import Map from './Map/Map';
@@ -6,11 +6,10 @@ import Map from './Map/Map';
 const PlayingScreen = () => {
 	return (
 		<div>
-			<PlayerProvider>
-				<Navbar />
-				<Map />
-				<CurrentUserInfo />
-			</PlayerProvider>
+			<Navbar />
+			<Map />
+			<StartGame />
+			<CurrentUserInfo />
 		</div>
 	);
 };

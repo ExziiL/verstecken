@@ -5,26 +5,32 @@ import PlayingScreen from './components/PlayingScreen/PlayingScreen';
 import Signup from './components/Signup/Signup';
 import PrivateRoute from './components/wrapper/PrivateRoute/PrivateRoute';
 import { AuthProvider } from './contexts/AuthContext';
+import { GameProvider } from './contexts/GameContext';
+import { PlayerProvider } from './contexts/PlayerContext';
 
 function App() {
 	return (
 		<div className="App">
 			<Router>
 				<AuthProvider>
-					<Routes>
-						<Route
-							path="/"
-							element={<PrivateRoute component={PlayingScreen} />}
-						/>
-						<Route
-							path="/signup"
-							element={<Signup />}
-						/>
-						<Route
-							path="/login"
-							element={<Login />}
-						/>
-					</Routes>
+					<GameProvider>
+						<PlayerProvider>
+							<Routes>
+								<Route
+									path="/"
+									element={<PrivateRoute component={PlayingScreen} />}
+								/>
+								<Route
+									path="/signup"
+									element={<Signup />}
+								/>
+								<Route
+									path="/login"
+									element={<Login />}
+								/>
+							</Routes>
+						</PlayerProvider>
+					</GameProvider>
 				</AuthProvider>
 			</Router>
 		</div>

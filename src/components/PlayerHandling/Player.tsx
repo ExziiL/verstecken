@@ -14,7 +14,6 @@ const Player = () => {
 	/* ---------------------------------------- Player Handling ---------------------------------------- */
 	let { players, setPlayers } = useContext(PlayerContext);
 	const playerIdRef = ref(database, 'players/' + currentUser?.uid);
-	const playerLocationRef = ref(database, 'players/' + currentUser?.uid + '/latLongCoordinates');
 	const allPlayersRef = ref(database, 'players/');
 
 	const playerColors = ['blue', 'green', 'pink', 'yellow', 'purple', 'orange', 'black'];
@@ -62,7 +61,22 @@ const Player = () => {
 		}
 	}
 
-	/* get all player from database and write them to my players context */
+	// ----------------------------------- set Player Searching ----------------------------------------
+	function setPlayerIsSearching() {
+		if (players.length > 0 && players[0].id === currentUser?.uid && !players[0].isSearching) {
+			const firstPlayerRef = ref(database, 'players/' + players[0].id);
+
+			update(firstPlayerRef, {
+				isSearching: true,
+			});
+		}
+	}
+
+	useEffect(() => {
+		setPlayerIsSearching();
+	}, [players, allPlayersRef]);
+
+	/* ----------------- get all player from database and write them to my players context --------------- */
 	useEffect(() => {
 		onValue(allPlayersRef, (snapshot) => {
 			if (snapshot.val()) {
@@ -99,21 +113,18 @@ const Player = () => {
 		};
 	}, [playerLocation, currentUser]);
 
-	// TODO: 1. Farbe der UserCircle Component dynamisch setzen, funktioniert schon wieder nicht ._.
 	return (
 		<PlayerProvider>
-			<div>
-				{players.map((player) => (
-					<div key={player.id}>
-						<UserCircle
-							color={player.color}
-							playerName={player.name}
-							isSearching={player.isSearching}
-							latLongCoordinates={player.latLongCoordinates}
-						/>
-					</div>
-				))}
-			</div>
+			{players.map((player) => (
+				<div key={player.id}>
+					<UserCircle
+						color={player.color}
+						playerName={player.name}
+						isSearching={player.isSearching}
+						latLongCoordinates={player.latLongCoordinates}
+					/>
+				</div>
+			))}
 		</PlayerProvider>
 	);
 };
