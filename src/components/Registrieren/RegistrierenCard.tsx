@@ -42,6 +42,14 @@ function SignupCard() {
 		<div className="mb-4">
 			<h1 className="text-center m-10 text-4xl">Registrieren</h1>
 			{error && <div className="bg-red-600 text-xl p-4 text-white mb-6">Error: {error}</div>}
+			<div>
+				Hinweis:
+				<ul>
+					<li>- Der Name vor dem "@"-Zeichen in der E-Mail wird automatisch zum Spielernamen.</li>
+					<li>- Es kann eine beliebige E-Mail angegeben werden. Sie muss nicht existieren, aber das E-Mail-Format muss beibehalten werden</li>
+				</ul>
+			</div>
+			<br />
 			<form onSubmit={handleSubmit}>
 				<Label
 					id="email"
@@ -49,6 +57,7 @@ function SignupCard() {
 					type="email"
 					name="email"
 					ref={emailRef}
+					placeholder="xxxxx@xxxxx.xx"
 				/>
 				<Label
 					id="password"

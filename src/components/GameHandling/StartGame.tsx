@@ -1,11 +1,13 @@
 import { getDatabase, ref, set, update } from 'firebase/database';
 import { useContext } from 'react';
+import { useAuth } from '../../contexts/AuthContext';
 import { GameContext } from '../../contexts/GameContext';
 import { PlayerContext } from '../../contexts/PlayerContext';
 
 const StartGame = () => {
 	const { seconds, gameRunning, setGameRunning } = useContext(GameContext);
 	const { players } = useContext(PlayerContext);
+	const { currentUser } = useAuth();
 
 	const database = getDatabase();
 	const gameRef = ref(database, 'game/');
@@ -32,6 +34,23 @@ const StartGame = () => {
 		set(dbRef, 0);
 	}
 
+	function handleNewPlayingField() {
+		// get current players position
+		const currentPlayer = players?.find((player) => player.id === currentUser?.uid);
+
+		if (currentPlayer) {
+			const { latLongCoordinates } = currentPlayer;
+
+			console.log('latLongCoordinates', latLongCoordinates);
+
+			if (latLongCoordinates[0] !== 0 && latLongCoordinates[1] !== 0) {
+				update(gameRef, { boundingBoxCenter: latLongCoordinates });
+			} else {
+				alert('Please wait until your position is loaded!');
+			}
+		}
+	}
+
 	const borderStyle = 'border-2 border-black px-6 py-1';
 
 	return (
@@ -48,6 +67,12 @@ const StartGame = () => {
 				onClick={handleReset}
 			>
 				Reset
+			</button>
+			<button
+				className={`${borderStyle}`}
+				onClick={handleNewPlayingField}
+			>
+				set playing field
 			</button>
 		</div>
 	);

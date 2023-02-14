@@ -19,6 +19,9 @@ const Player = () => {
 	const playerColors = ['blue', 'green', 'pink', 'yellow', 'purple', 'orange', 'black'];
 
 	/* ----------------------------------- add player to database and set color --------------------------------------- */
+	function trimUserEmail(email: string | null) {
+		return email?.replace(/@.*/, '');
+	}
 	useEffect(() => {
 		if (currentUser) {
 			const playerRef = ref(database, 'players/' + currentUser.uid);
@@ -28,7 +31,7 @@ const Player = () => {
 				if (!snapshot.exists() || objectLength < 6) {
 					set(playerRef, {
 						id: currentUser.uid,
-						name: currentUser.email,
+						name: trimUserEmail(currentUser.email),
 						isSearching: false,
 						color: 'grey',
 						latLongCoordinates: playerLocation,

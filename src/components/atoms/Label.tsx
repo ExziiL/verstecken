@@ -6,6 +6,7 @@ export interface ILabel {
 	type: string;
 	name: string;
 	ref: any;
+	placeholder?: string;
 }
 // const Label: FC<ILabel> = ({ id, header, type, name, ref }) => {
 const Label = React.forwardRef<HTMLInputElement, ILabel>((props, ref) => {
@@ -21,6 +22,7 @@ const Label = React.forwardRef<HTMLInputElement, ILabel>((props, ref) => {
 				name={props.name}
 				required
 				ref={ref}
+				placeholder={props.placeholder}
 			></input>
 		</label>
 	);
