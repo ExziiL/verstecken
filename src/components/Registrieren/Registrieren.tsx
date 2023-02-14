@@ -1,10 +1,10 @@
 import { Link } from 'react-router-dom';
-import SignupCard from './SignupCard';
+import RegistrierenCard from './RegistrierenCard';
 
-function Signup() {
+function Registrieren() {
 	return (
 		<div className="p-4">
-			<SignupCard />
+			<RegistrierenCard />
 			<div>
 				Hast du bereits einen Account? <Link to="/login">Hier Anmelden</Link>
 			</div>
@@ -12,4 +12,4 @@ function Signup() {
 	);
 }
 
-export default Signup;
+export default Registrieren;

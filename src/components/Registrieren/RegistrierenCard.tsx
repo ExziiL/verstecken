@@ -4,7 +4,7 @@ import { useAuth } from '../../contexts/AuthContext';
 
 import Button from '../atoms/Button';
 import Label from '../atoms/Label';
-import Signup from './Signup';
+import Signup from './Registrieren';
 
 function SignupCard() {
 	const emailRef = useRef<any>();

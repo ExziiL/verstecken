@@ -7,57 +7,71 @@ import { PlayerContext } from '../../../contexts/PlayerContext';
 
 import Button from '../../atoms/Button';
 
-interface ICurrentUserInfo {
-	currentUser: any;
-}
-
 const CurrentUserInfo = () => {
 	const { currentUser } = useAuth();
 	const { players, setPlayers } = useContext(PlayerContext);
 	const { gameRunning } = useContext(GameContext);
 	const database = getDatabase();
 
-	function handleJoinHidingTeam() {
+	function switchTeam() {
 		const playerRef = ref(database, 'players/' + currentUser?.uid);
+
 		update(playerRef, {
-			isSearching: false,
-		});
-	}
-	function handleJoinSeekingTeam() {
-		const playerRef = ref(database, 'players/' + currentUser?.uid);
-		update(playerRef, {
-			isSearching: true,
+			isSearching: !players?.find((player: any) => player.id === currentUser?.uid)?.isSearching,
 		});
 	}
 
 	return (
 		<>
 			<div>Current User: {currentUser ? currentUser.email : null}</div>
+			<div className="w-40">
+				{gameRunning ? null : (
+					<Button
+						className=""
+						text="Switch Team"
+						onClick={switchTeam}
+					/>
+				)}
+			</div>
 			<div className="flex justify-between p-4">
 				<div>
 					<ul>
 						versteckende Spieler:
-						{players?.map((player: any) => (player.isSearching ? null : <li key={player.id}>{player.name}</li>))}
+						{players?.map((player: any) =>
+							player.isSearching ? null : (
+								<div
+									className="flex"
+									key={player.id}
+								>
+									<div
+										style={{ backgroundColor: player.color }}
+										className={`w-2 h-2 rounded-full self-center mr-1.5`}
+									></div>
+									<li key={player.id}>{player.name}</li>
+								</div>
+							)
+						)}
 					</ul>
-					{gameRunning ? null : (
-						<Button
-							text="Join Team"
-							onClick={handleJoinHidingTeam}
-						/>
-					)}
 				</div>
 
 				<div>
 					<ul>
 						suchende Spieler:
-						{players?.map((player: any) => (player.isSearching ? <li key={player.name}>{player.name}</li> : null))}
+						{players?.map((player: any) =>
+							player.isSearching ? (
+								<div
+									className="flex"
+									key={player.id}
+								>
+									<div
+										style={{ backgroundColor: player.isSearching ? 'red' : player.color }}
+										className={`w-2 h-2 rounded-full self-center mr-1.5`}
+									></div>
+									<li key={player.name}>{player.name}</li>
+								</div>
+							) : null
+						)}
 					</ul>
-					{gameRunning ? null : (
-						<Button
-							text="Join Team"
-							onClick={handleJoinSeekingTeam}
-						/>
-					)}
 				</div>
 			</div>
 		</>

@@ -2,7 +2,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import './App.css';
 import Login from './components/Login/Login';
 import PlayingScreen from './components/PlayingScreen/PlayingScreen';
-import Signup from './components/Signup/Signup';
+import Registrieren from './components/Registrieren/Registrieren';
 import PrivateRoute from './components/wrapper/PrivateRoute/PrivateRoute';
 import { AuthProvider } from './contexts/AuthContext';
 import { GameProvider } from './contexts/GameContext';
@@ -22,7 +22,7 @@ function App() {
 								/>
 								<Route
 									path="/signup"
-									element={<Signup />}
+									element={<Registrieren />}
 								/>
 								<Route
 									path="/login"

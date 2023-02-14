@@ -38,13 +38,14 @@ const Player = () => {
 			});
 			handleDisconnect(playerRef);
 		}
-	}, [playerIdRef, currentUser]); // Hier ein argument hinzufügen? davor war es [currentUser]
+	}, [playerIdRef, currentUser]);
 
 	const handleDisconnect = (ref: any) => {
 		const disconnect = onDisconnect(ref);
 		disconnect.remove();
 	};
 
+	// ---------------- set color for player ----------------
 	function setPlayerColor(givenPlayers: any) {
 		const currentPlayer = givenPlayers.find((player: any) => player.id === currentUser?.uid);
 
@@ -53,10 +54,17 @@ const Player = () => {
 			const availableColors = playerColors.filter((color) => !usedColors.includes(color));
 
 			if (availableColors.length > 0) {
-				update(playerIdRef, {
-					color: availableColors[0],
-					colorIsSet: true,
-				});
+				if (currentPlayer?.isSearching) {
+					update(playerIdRef, {
+						color: 'red',
+						colorIsSet: true,
+					});
+				} else {
+					update(playerIdRef, {
+						color: availableColors[0],
+						colorIsSet: true,
+					});
+				}
 			}
 		}
 	}
@@ -99,7 +107,7 @@ const Player = () => {
 	}, [playerLocation, currentUser]);
 
 	return (
-		<PlayerProvider>
+		<div>
 			{players.map((player) => (
 				<div key={player.id}>
 					<UserCircle
@@ -110,7 +118,7 @@ const Player = () => {
 					/>
 				</div>
 			))}
-		</PlayerProvider>
+		</div>
 	);
 };
 
