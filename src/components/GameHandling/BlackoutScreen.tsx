@@ -1,13 +1,9 @@
-import { getDatabase, ref } from 'firebase/database';
 import React, { useContext, useEffect } from 'react';
 
 import { GameContext } from '../../contexts/GameContext';
 
 const BlackoutScreen = () => {
-	const database = getDatabase();
-	const gameRef = ref(database, 'game/');
-
-	const { seconds, gameRunning, setGameRunning } = useContext(GameContext);
+	const { seconds } = useContext(GameContext);
 
 	useEffect(() => {});
 

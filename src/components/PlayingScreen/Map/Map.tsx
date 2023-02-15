@@ -1,21 +1,18 @@
+import { getDatabase, onValue, ref, set, update } from 'firebase/database';
 import { LatLngBoundsExpression, LatLngExpression } from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import { FC, useContext, useEffect, useState } from 'react';
 import { MapContainer, Marker, Popup, TileLayer, useMap } from 'react-leaflet';
-import './Map.css';
-
-import { useContext, useEffect, useState } from 'react';
-
-import { getDatabase, onValue, ref, set, update } from 'firebase/database';
-
 import { PlayerContext } from '../../../contexts/PlayerContext';
-
+import Player from '../../PlayerHandling/Player';
+import './Map.css';
 import PlayingField from './PlayingField/PlayingField';
 
-import Player from '../../PlayerHandling/Player';
+interface IMap {
+	hidden: boolean;
+}
 
-const Map = () => {
-	const { players } = useContext(PlayerContext);
-
+const Map: FC<IMap> = ({ hidden }) => {
 	const database = getDatabase();
 	const gameRef = ref(database, 'game/');
 	const [boundingBoxCenter, setBoundingBoxCenter] = useState<any>([0, 0]);
@@ -40,15 +37,13 @@ const Map = () => {
 	const width = 0.0025;
 	const height = 0.0015;
 
-	console.log('boundingBoxCenter', boundingBoxCenter);
-
 	const northWest: LatLngExpression = [boundingBoxCenter[0] + height / 2, boundingBoxCenter[1] - width / 2];
 	const southEast: LatLngExpression = [boundingBoxCenter[0] - height / 2, boundingBoxCenter[1] + width / 2];
 
 	const playingFieldBorder: LatLngBoundsExpression = [northWest, southEast];
 
 	return (
-		<div>
+		<div className={hidden ? 'hidden' : ''}>
 			<MapContainer
 				id="map"
 				center={defaultCenter}

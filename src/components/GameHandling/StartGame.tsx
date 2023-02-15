@@ -11,6 +11,7 @@ const StartGame = () => {
 
 	const database = getDatabase();
 	const gameRef = ref(database, 'game/');
+	const playerRef = ref(database, 'players/' + currentUser?.uid);
 
 	const handleStart = () => {
 		if (players) {
@@ -51,6 +52,26 @@ const StartGame = () => {
 		}
 	}
 
+	// function getPlayerLocation() {
+	// 	if (navigator.geolocation) {
+	// 		console.log('button clicked');
+
+	// 		navigator.geolocation.getCurrentPosition((position) => {
+	// 			console.log('position', position);
+
+	// 			const lat = position.coords.latitude;
+	// 			const long = position.coords.longitude;
+	// 			const latLongCoordinates = [lat, long];
+
+	// 			const currentPlayer = players?.find((player) => player.id === currentUser?.uid);
+	// 			console.log('latLongCoordinates', latLongCoordinates);
+	// 			update(playerRef, { latLongCoordinates: latLongCoordinates });
+	// 		});
+	// 	} else {
+	// 		alert('Geolocation is not supported by your browser.');
+	// 	}
+	// }
+
 	const borderStyle = 'border-2 border-black px-6 py-1';
 
 	return (
@@ -74,6 +95,12 @@ const StartGame = () => {
 			>
 				set playing field
 			</button>
+			{/* <button
+				className={`${borderStyle}`}
+				onClick={getPlayerLocation}
+			>
+				set location manually
+			</button> */}
 		</div>
 	);
 };
