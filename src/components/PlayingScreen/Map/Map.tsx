@@ -13,34 +13,8 @@ interface IMap {
 }
 
 const Map: FC<IMap> = ({ hidden }) => {
-	const database = getDatabase();
-	const gameRef = ref(database, 'game/');
-	const [boundingBoxCenter, setBoundingBoxCenter] = useState<any>([0, 0]);
-
 	const defaultCenter: LatLngExpression = [48.83852223540835, 10.07696360335071];
 	const defaultZoom = 17;
-
-	// ----------------- set initial bounding box center -----------------
-	if (boundingBoxCenter[0] === defaultCenter[0] && boundingBoxCenter[1] === defaultCenter[1]) {
-		update(gameRef, { boundingBoxCenter: defaultCenter });
-	}
-
-	// ----------------- get bounding box center -----------------
-	useEffect(() => {
-		const boundingBoxCenterRef = ref(database, 'game/boundingBoxCenter');
-		onValue(boundingBoxCenterRef, (snapshot) => {
-			setBoundingBoxCenter(snapshot.val());
-		});
-	}, []);
-
-	// ----------------- calculate the bounding box of the playing field -----------------
-	const width = 0.0025;
-	const height = 0.0015;
-
-	const northWest: LatLngExpression = [boundingBoxCenter[0] + height / 2, boundingBoxCenter[1] - width / 2];
-	const southEast: LatLngExpression = [boundingBoxCenter[0] - height / 2, boundingBoxCenter[1] + width / 2];
-
-	const playingFieldBorder: LatLngBoundsExpression = [northWest, southEast];
 
 	return (
 		<div className={hidden ? 'hidden' : ''}>
@@ -55,7 +29,7 @@ const Map: FC<IMap> = ({ hidden }) => {
 					url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
 				/>
 
-				<PlayingField boundingBoxRectangle={playingFieldBorder} />
+				<PlayingField />
 
 				<Player />
 			</MapContainer>

@@ -1,6 +1,7 @@
 import { useContext, useEffect, useState } from 'react';
 
 import { getDatabase, off, onDisconnect, onValue, ref, set, update } from 'firebase/database';
+import { LatLngBoundsExpression } from 'leaflet';
 import { useAuth } from '../../contexts/AuthContext';
 import { PlayerContext, PlayerProvider } from '../../contexts/PlayerContext';
 import UserCircle from './UserCircle';
@@ -11,14 +12,14 @@ const Player = () => {
 	const { currentUser } = useAuth();
 	const [watchId, setWatchId] = useState<any>();
 
-	/* ---------------------------------------- Player Handling ---------------------------------------- */
+	/* --------------------------- Player Handling ---------------------------- */
 	let { players, setPlayers } = useContext(PlayerContext);
 	const playerIdRef = ref(database, 'players/' + currentUser?.uid);
 	const allPlayersRef = ref(database, 'players/');
 
 	const playerColors = ['blue', 'green', 'pink', 'yellow', 'purple', 'orange', 'black'];
 
-	/* ----------------------------------- add player to database and set color --------------------------------------- */
+	/* ----------------------- add player to database and set color --------------------------- */
 	function trimUserEmail(email: string | null) {
 		return email?.replace(/@.*/, '');
 	}
@@ -108,6 +109,11 @@ const Player = () => {
 			navigator.geolocation.clearWatch(watchId);
 		};
 	}, [playerLocation, currentUser]);
+
+	/* ----------------------------- set player circle bounding box --------------------------------------- */
+	const [boundingBox, setBoundingBox] = useState<LatLngBoundsExpression>([]);
+	const boundingBoxRectangle: LatLngBoundsExpression = [];
+	const playerCircleRadius = 0.0005;
 
 	return (
 		<div>
