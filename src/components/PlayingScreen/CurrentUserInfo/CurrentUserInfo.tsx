@@ -41,7 +41,7 @@ const CurrentUserInfo = () => {
 							player.isSearching ? null : (
 								<div
 									className="flex"
-									key={player.id}
+									key={player.id + player.name}
 								>
 									<div
 										style={{ backgroundColor: player.color }}

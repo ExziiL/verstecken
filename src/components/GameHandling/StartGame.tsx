@@ -1,10 +1,11 @@
-import { getDatabase, ref, set, update } from 'firebase/database';
-import { useContext } from 'react';
+import { getDatabase, off, onValue, ref, set, update } from 'firebase/database';
+import { useContext, useEffect, useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { GameContext } from '../../contexts/GameContext';
 import { PlayerContext } from '../../contexts/PlayerContext';
 
 const StartGame = () => {
+	const [boundingBoxCenter, setBoundingBoxCenter] = useState<any>([0, 0]);
 	const { seconds, gameRunning, setGameRunning } = useContext(GameContext);
 	const { players } = useContext(PlayerContext);
 	const { currentUser } = useAuth();
@@ -52,25 +53,51 @@ const StartGame = () => {
 		}
 	}
 
-	// function getPlayerLocation() {
-	// 	if (navigator.geolocation) {
-	// 		console.log('button clicked');
+	useEffect(() => {
+		onValue(gameRef, (snapshot) => {
+			if (snapshot.exists()) {
+				const game = snapshot.val();
+				setBoundingBoxCenter(game.boundingBoxCenter);
+			}
+		});
+	}, []);
 
-	// 		navigator.geolocation.getCurrentPosition((position) => {
-	// 			console.log('position', position);
+	function movePlayingFieldToLeft() {
+		if (boundingBoxCenter) {
+			const newBoundingBoxCenter = [boundingBoxCenter[0], boundingBoxCenter[1] - 0.0001];
 
-	// 			const lat = position.coords.latitude;
-	// 			const long = position.coords.longitude;
-	// 			const latLongCoordinates = [lat, long];
+			update(gameRef, { boundingBoxCenter: newBoundingBoxCenter });
 
-	// 			const currentPlayer = players?.find((player) => player.id === currentUser?.uid);
-	// 			console.log('latLongCoordinates', latLongCoordinates);
-	// 			update(playerRef, { latLongCoordinates: latLongCoordinates });
-	// 		});
-	// 	} else {
-	// 		alert('Geolocation is not supported by your browser.');
-	// 	}
-	// }
+			setBoundingBoxCenter(newBoundingBoxCenter);
+		}
+	}
+	function movePlayingFieldUp() {
+		if (boundingBoxCenter) {
+			const newBoundingBoxCenter = [boundingBoxCenter[0] + 0.0001, boundingBoxCenter[1]];
+
+			update(gameRef, { boundingBoxCenter: newBoundingBoxCenter });
+
+			setBoundingBoxCenter(newBoundingBoxCenter);
+		}
+	}
+	function movePlayingFieldDown() {
+		if (boundingBoxCenter) {
+			const newBoundingBoxCenter = [boundingBoxCenter[0] - 0.0001, boundingBoxCenter[1]];
+
+			update(gameRef, { boundingBoxCenter: newBoundingBoxCenter });
+
+			setBoundingBoxCenter(newBoundingBoxCenter);
+		}
+	}
+	function movePlayingFieldToRight() {
+		if (boundingBoxCenter) {
+			const newBoundingBoxCenter = [boundingBoxCenter[0], boundingBoxCenter[1] + 0.0001];
+
+			update(gameRef, { boundingBoxCenter: newBoundingBoxCenter });
+
+			setBoundingBoxCenter(newBoundingBoxCenter);
+		}
+	}
 
 	const borderStyle = 'border-2 border-black px-6 py-1';
 
@@ -95,12 +122,30 @@ const StartGame = () => {
 			>
 				set playing field
 			</button>
-			{/* <button
+			<button
 				className={`${borderStyle}`}
-				onClick={getPlayerLocation}
+				onClick={movePlayingFieldToRight}
 			>
-				set location manually
-			</button> */}
+				move right
+			</button>
+			<button
+				className={`${borderStyle}`}
+				onClick={movePlayingFieldToLeft}
+			>
+				move left
+			</button>
+			<button
+				className={`${borderStyle}`}
+				onClick={movePlayingFieldUp}
+			>
+				move up
+			</button>
+			<button
+				className={`${borderStyle}`}
+				onClick={movePlayingFieldDown}
+			>
+				move down
+			</button>
 		</div>
 	);
 };
