@@ -6,7 +6,13 @@ function Login() {
 		<div className="p-4">
 			<LoginCard />
 			<div>
-				Möchtest du dich anmelden? <Link to="/signup">Hier Registrieren</Link>
+				Bitte erst registrieren.{' '}
+				<Link
+					to="/signup"
+					className="font-bold underline"
+				>
+					Hier Registrieren
+				</Link>
 			</div>
 		</div>
 	);

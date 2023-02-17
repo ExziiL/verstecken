@@ -17,6 +17,7 @@ export const GameContext = createContext<IGameContext>({
 	setGameRunning: () => {},
 } as IGameContext);
 
+// GameProvider is responsible for the game time and the game state
 export const GameProvider: FC<IGameProvider> = ({ children }: any) => {
 	const [seconds, setSeconds] = useState(0);
 	const [gameRunning, setGameRunning] = useState(false);

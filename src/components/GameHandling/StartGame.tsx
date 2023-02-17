@@ -13,15 +13,19 @@ const StartGame = () => {
 
 	const database = getDatabase();
 	const gameRef = ref(database, 'game/');
-	const playerRef = ref(database, 'players/' + currentUser?.uid);
 
+	// Handhabung des Start-Buttons
 	const handleStart = () => {
 		if (players) {
 			const seekingPlayers = players.filter((player) => player.isSearching);
+			const hidingPlayers = players.filter((player) => !player.isSearching);
 			if (seekingPlayers.length === 0) {
 				alert('No seeking players!');
+			} else if (hidingPlayers.length === 0) {
+				alert('No hiding players!');
 			} else {
 				setGameRunning(true);
+				// update ist eine Funktion von firebase, sie aktualisiert den übergebenen Wert auf der Datenbank
 				update(gameRef, { gameRunning: true });
 			}
 		}
@@ -38,10 +42,10 @@ const StartGame = () => {
 	}
 
 	function handleNewPlayingField() {
-		// get current players position
 		const currentPlayer = players?.find((player) => player.id === currentUser?.uid);
 
 		if (currentPlayer) {
+			// if currentPlayer exists, get current player position and write it to the database
 			const { latLongCoordinates } = currentPlayer;
 
 			console.log('latLongCoordinates', latLongCoordinates);
@@ -54,7 +58,10 @@ const StartGame = () => {
 		}
 	}
 
+	// useEffect wird bei jedem Render ausgeführt
 	useEffect(() => {
+		// onValue holt sich den Wert aus der Datenbank und speichert ihn in snapshot. Wenn sich der Wert ändert, wird onValue erneut ausgeführt.
+		// onValue ist ebenfalls eine Funktion von firebase
 		onValue(gameRef, (snapshot) => {
 			if (snapshot.exists()) {
 				const game = snapshot.val();
@@ -105,48 +112,62 @@ const StartGame = () => {
 	return (
 		<div>
 			{seconds}
-			<button
-				className={`${borderStyle}`}
-				onClick={gameRunning ? handleStop : handleStart}
-			>
-				{gameRunning ? 'Stop' : 'Start'}
-			</button>
-			<button
-				className={`${borderStyle}`}
-				onClick={handleReset}
-			>
-				Reset
-			</button>
-			<button
-				className={`${borderStyle}`}
-				onClick={handleNewPlayingField}
-			>
-				set playing field
-			</button>
-			<button
-				className={`${borderStyle}`}
-				onClick={movePlayingFieldToRight}
-			>
-				move right
-			</button>
-			<button
-				className={`${borderStyle}`}
-				onClick={movePlayingFieldToLeft}
-			>
-				move left
-			</button>
-			<button
-				className={`${borderStyle}`}
-				onClick={movePlayingFieldUp}
-			>
-				move up
-			</button>
-			<button
-				className={`${borderStyle}`}
-				onClick={movePlayingFieldDown}
-			>
-				move down
-			</button>
+			<div className="p-4 space-x-2">
+				<button
+					className={`${borderStyle}`}
+					onClick={gameRunning ? handleStop : handleStart}
+				>
+					{gameRunning ? 'Stop Timer' : 'Start Timer'}
+				</button>
+
+				{!gameRunning && (
+					<button
+						className={`${borderStyle}`}
+						onClick={handleReset}
+					>
+						Reset Timer
+					</button>
+				)}
+			</div>
+
+			{!gameRunning && (
+				<>
+					<div className="px-4">
+						<button
+							className={`${borderStyle}`}
+							onClick={handleNewPlayingField}
+						>
+							set playing field to your position
+						</button>
+					</div>
+					<div className="p-4 space-x-2">
+						<button
+							className={`${borderStyle}`}
+							onClick={movePlayingFieldToRight}
+						>
+							move field right
+						</button>
+						<button
+							className={`${borderStyle}`}
+							onClick={movePlayingFieldToLeft}
+						>
+							move field left
+						</button>
+						<button
+							className={`${borderStyle}`}
+							onClick={movePlayingFieldUp}
+						>
+							move field up
+						</button>
+						<button
+							className={`${borderStyle}`}
+							onClick={movePlayingFieldDown}
+						>
+							move field down
+						</button>
+					</div>
+				</>
+			)}
 		</div>
 	);
 };

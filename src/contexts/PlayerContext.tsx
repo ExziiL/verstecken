@@ -18,6 +18,7 @@ export const PlayerContext = createContext<IPlayerContext>({
 	setPlayers: () => {},
 } as IPlayerContext);
 
+// PlayerProvider handhabt die Spielerliste, die aus der Datenbank kommt
 export const PlayerProvider: FC<IPlayerProvider> = ({ children }: any) => {
 	const [players, setPlayers] = useState<any[]>([]);
 

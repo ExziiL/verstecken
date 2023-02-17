@@ -6,6 +6,7 @@ import Button from '../atoms/Button';
 import Label from '../atoms/Label';
 import Signup from './Registrieren';
 
+// Hier drunter werden die Funktionen definiert, die für die Registrierung benötigt werden
 function SignupCard() {
 	const emailRef = useRef<any>();
 	const passwordRef = useRef<any>();
@@ -46,7 +47,8 @@ function SignupCard() {
 				Hinweis:
 				<ul>
 					<li>- Der Name vor dem "@"-Zeichen in der E-Mail wird automatisch zum Spielernamen.</li>
-					<li>- Es kann eine beliebige E-Mail angegeben werden. Sie muss nicht existieren, aber das E-Mail-Format muss beibehalten werden</li>
+					<li>- Es kann eine beliebige E-Mail angegeben werden. Sie muss nicht existieren, aber das E-Mail-Format muss beibehalten werden.</li>
+					<li className="font-bold">- Passwort muss mindestens 6 Zeichen lang sein.</li>
 				</ul>
 			</div>
 			<br />
@@ -65,6 +67,7 @@ function SignupCard() {
 					type="password"
 					name="password"
 					ref={passwordRef}
+					placeholder="mind. 6 Zeichen!"
 				/>
 				<Label
 					id="password-confirm"

@@ -20,6 +20,7 @@ export const GameBoundingBoxContext = createContext<IGameBoundingBoxContext>({
 	gameBoundingBoxSouthEast: [0, 0],
 } as IGameBoundingBoxContext);
 
+// In der GameBoundingBoxContext.tsx wird der Mittelpunkt des Spielfeldes berechnet und in die Datenbank geschrieben
 export const GameBoundingBoxProvider: FC<IGameBoundingBoxProvider> = ({ children }: any) => {
 	const [gameBoundingBoxCenter, setGameBoundingBoxCenter] = useState<any>([48.84115285275322, 10.067394677015379]);
 

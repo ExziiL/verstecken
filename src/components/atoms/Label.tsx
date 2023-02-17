@@ -8,7 +8,6 @@ export interface ILabel {
 	ref: any;
 	placeholder?: string;
 }
-// const Label: FC<ILabel> = ({ id, header, type, name, ref }) => {
 const Label = React.forwardRef<HTMLInputElement, ILabel>((props, ref) => {
 	return (
 		<label

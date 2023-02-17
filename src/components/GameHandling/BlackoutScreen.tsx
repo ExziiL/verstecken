@@ -2,10 +2,10 @@ import React, { useContext, useEffect } from 'react';
 
 import { GameContext } from '../../contexts/GameContext';
 
+// -------- Der Blackoutscreen wird angezeigt, wenn der Spieler der Suchende ist. --------
 const BlackoutScreen = () => {
+	// const {seconds} = useContext(GameContext) holt sich die Sekunden aus dem GameContext, Der GameContext holt sie wiederum aus der Datenbank
 	const { seconds } = useContext(GameContext);
-
-	useEffect(() => {});
 
 	return (
 		<div className="bg-black z-50 w-full h-80 text-white text-center flex flex-col justify-center">

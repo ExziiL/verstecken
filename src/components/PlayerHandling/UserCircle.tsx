@@ -13,6 +13,7 @@ export interface IUserCircle {
 	isColliding: boolean;
 }
 
+// UserCircle is the circle that represents the player on the map
 const UserCircle: FC<IUserCircle> = ({ color, playerName, isSearching, outsideOfPlayingField, latLongCoordinates, isColliding }) => {
 	const fillColor = { color: color };
 	const searchingColor = { color: 'red' };
@@ -36,28 +37,13 @@ const UserCircle: FC<IUserCircle> = ({ color, playerName, isSearching, outsideOf
 		}
 	}, [latLongCoordinates]);
 
+	// Circle is a component from react-leaflet, it creates a circle on the map
+	// Tooltip is a component from react-leaflet, it creates a tooltip on the map, when clicked on the circle
 	return (
 		<div key={playerName}>
-			{/* ---------------------- kann später gelöscht werden */}
-			<Circle
-				center={playerBoundingBox[0]}
-				radius={2.5}
-				pathOptions={{ color: 'red' }}
-				opacity={1}
-			></Circle>
-			<Circle
-				center={playerBoundingBox[1]}
-				radius={2.5}
-				pathOptions={{ color: 'red' }}
-				opacity={1}
-			></Circle>
-			{/* ---------------------- */}
-			<Rectangle bounds={playerBoundingBox}>
-				<Tooltip>{playerName}</Tooltip>
-			</Rectangle>
 			<Circle
 				center={latLongCoordinates as LatLngTuple}
-				pathOptions={isColliding ? { color: 'yellow' } : outsideOfPlayingField ? { color: 'black' } : isSearching ? searchingColor : fillColor}
+				pathOptions={isSearching ? searchingColor : isColliding ? { color: 'yellow' } : outsideOfPlayingField ? { color: 'black' } : fillColor}
 				radius={10}
 				stroke={true}
 				opacity={0.5}

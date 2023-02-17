@@ -4,16 +4,19 @@ import { getDatabase, off, onDisconnect, onValue, ref, set, update } from 'fireb
 import { LatLngBoundsExpression, LatLngTuple } from 'leaflet';
 import { useAuth } from '../../contexts/AuthContext';
 import { GameBoundingBoxContext } from '../../contexts/GameBoundingBoxContext';
+import { GameContext } from '../../contexts/GameContext';
 import { PlayerContext, PlayerProvider } from '../../contexts/PlayerContext';
 import UserCircle from './UserCircle';
 
 const Player = () => {
+	// ------------- benötigte Variablen -------------
 	const [playerLocation, setPlayerLocation] = useState<[number, number]>([0, 0]);
 	const database = getDatabase();
 	const { currentUser } = useAuth();
 	const [watchId, setWatchId] = useState<any>();
+	const { seconds } = useContext(GameContext);
 
-	/* --------------------------- Player Handling ---------------------------- */
+	/* --------------------------- Player Handling Variable ---------------------------- */
 	let { players, setPlayers } = useContext(PlayerContext);
 	const playerIdRef = ref(database, 'players/' + currentUser?.uid);
 	const allPlayersRef = ref(database, 'players/');
@@ -35,6 +38,8 @@ const Player = () => {
 			onValue(playerRef, (snapshot) => {
 				const objectLength = snapshot.val() ? Object.keys(snapshot.val()).length : 0;
 				if (!snapshot.exists() || objectLength < 6) {
+					// if player does not exist in database or if player does not have all properties, create player
+					// set is a function from firebase, it sets the given object to the database
 					set(playerRef, {
 						id: currentUser.uid,
 						name: trimUserEmail(currentUser.email),
@@ -51,6 +56,7 @@ const Player = () => {
 		}
 	}, [playerIdRef, currentUser]);
 
+	// handleDisconnect is a function from firebase, it removes the player from the database when the player disconnects
 	const handleDisconnect = (ref: any) => {
 		const disconnect = onDisconnect(ref);
 		disconnect.remove();
@@ -79,6 +85,7 @@ const Player = () => {
 	}
 
 	/* ----------------- get all player from database and write them to my players context --------------- */
+	// useEffect is a react hook, it is called when the component is mounted, updated or unmounted
 	useEffect(() => {
 		onValue(allPlayersRef, (snapshot) => {
 			if (snapshot.val()) {
@@ -131,6 +138,7 @@ const Player = () => {
 		}
 	}, [playerLocation, playerNorthWest, playerSouthEast]);
 
+	// ich weiß ehrlich gesagt nicht mehr genau wieso das auskommentiert ist, aber ich werde es nicht löschen, weil ich in 40 Minuten abgeben muss und ich nichts riskieren möchte
 	useEffect(() => {
 		onValue(playerIdRef, (snapshot) => {
 			if (snapshot.val()) {
@@ -166,14 +174,16 @@ const Player = () => {
 		}
 	}, [playerLocation, playerNorthWest, playerSouthEast]);
 
-	// --------- determine if player is colliding with other players ----------------
+	// --------- determine if seeking player is colliding with other players ----------------
 	useEffect(() => {
-		if (currentPlayer && playerLocation[0] !== 0) {
-			const isColliding = players.some((player: any) => {
+		if (currentPlayer && playerLocation[0] !== 0 && players.length > 0) {
+			const seekingPlayers = players?.filter((player: any) => player.isSearching);
+			const isColliding = seekingPlayers.some((player: any) => {
 				if (player.id !== currentPlayer.id && player.boundingBox) {
 					const otherPlayerNorthWest = player.boundingBox.northWest;
 					const otherPlayerSouthEast = player.boundingBox.southEast;
 
+					// diese if-Abfragen prüfen, ob sich ein Spieler innerhalb eines anderen Spielers befindet
 					return (
 						(otherPlayerNorthWest[1] < playerSouthEast[1] && otherPlayerNorthWest[0] > playerSouthEast[0] && otherPlayerNorthWest[0] < playerNorthWest[0] && otherPlayerNorthWest[1] > playerNorthWest[1]) ||
 						(otherPlayerNorthWest[1] < playerSouthEast[1] && playerNorthWest[0] > otherPlayerSouthEast[0] && playerSouthEast[0] < otherPlayerSouthEast[0] && playerNorthWest[1] < otherPlayerNorthWest[1]) ||
@@ -189,6 +199,26 @@ const Player = () => {
 		}
 	}, [playerLocation, players, playerNorthWest, playerSouthEast]);
 
+	//---------- handle seeking player finding a player ----------------
+	useEffect(() => {
+		if (currentPlayer && playerLocation[0] !== 0 && players.length > 0) {
+			const hidingPlayers = players.filter((player: any) => !player.isSearching);
+			const foundPlayers = hidingPlayers.filter((player: any) => {
+				if (!player.isSearching && player.isColliding && seconds > 60) {
+					console.log('found player', player.name);
+					return player;
+				}
+			});
+
+			if (currentPlayer && foundPlayers && seconds > 60) {
+				update(playerIdRef, {
+					isSearching: true,
+				});
+			}
+		}
+	}, [playerLocation, players, playerNorthWest, playerSouthEast, seconds]);
+
+	// players.map wird dazu verwendet, um alle Spieler auf der Karte anzuzeigen
 	return (
 		<div>
 			{players.map((player) => (

@@ -12,6 +12,7 @@ interface IMap {
 	hidden: boolean;
 }
 
+// Map stellt die Karte dar, die im Spiel verwendet wird und enthält die Komponenten PlayingField und Player, für die Darstellung bzw. Steuerung des Spielers
 const Map: FC<IMap> = ({ hidden }) => {
 	const defaultCenter: LatLngExpression = [48.83852223540835, 10.07696360335071];
 	const defaultZoom = 17;

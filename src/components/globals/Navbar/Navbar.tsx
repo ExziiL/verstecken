@@ -25,7 +25,7 @@ const Navbar = () => {
 
 	return (
 		<>
-			<div className="flex justify-between items-center p-2 mb-6 shadow-md">
+			<div className="flex justify-between items-center p-2 mb-1 shadow-md">
 				<div>Verstecken</div>
 				<div className="">
 					<Button

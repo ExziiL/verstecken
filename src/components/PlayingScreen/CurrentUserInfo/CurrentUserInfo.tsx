@@ -7,15 +7,19 @@ import { PlayerContext } from '../../../contexts/PlayerContext';
 
 import Button from '../../atoms/Button';
 
+// CurrentUserInfo zeigt die Namen der angemeldeten Spieler an und gibt die Möglichkeit, das Team zu wechseln
 const CurrentUserInfo = () => {
 	const { currentUser } = useAuth();
 	const { players, setPlayers } = useContext(PlayerContext);
+	const currentPlayer = players?.find((player: any) => player.id === currentUser?.uid);
+
 	const { gameRunning } = useContext(GameContext);
 	const database = getDatabase();
 
 	function switchTeam() {
 		const playerRef = ref(database, 'players/' + currentUser?.uid);
 
+		// update ist eine Funktion von firebase, sie aktualisiert den übergebenen Wert auf der Datenbank
 		update(playerRef, {
 			isSearching: !players?.find((player: any) => player.id === currentUser?.uid)?.isSearching,
 		});
@@ -23,16 +27,20 @@ const CurrentUserInfo = () => {
 
 	return (
 		<>
-			<div>Current User: {currentUser ? currentUser.email : null}</div>
-			<div className="w-40">
+			<div>Du bist angemeldet als: {currentPlayer ? currentPlayer.name : null}</div>
+			<div>Um ein neues Spiel zu beginnen, bitte die Seite reloaden</div>
+			<div className="w-40 pt-4">
 				{gameRunning ? null : (
-					<Button
-						className=""
-						text="Switch Team"
-						onClick={switchTeam}
-					/>
+					<>
+						<Button
+							className=""
+							text="Switch Team"
+							onClick={switchTeam}
+						/>
+					</>
 				)}
 			</div>
+
 			<div className="flex justify-between p-4">
 				<div>
 					<ul>

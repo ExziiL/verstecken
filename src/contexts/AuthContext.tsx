@@ -19,6 +19,7 @@ export function useAuth() {
 	return useContext(AuthContext);
 }
 
+// In AuthProvider wird die Firebase Authentifizierung initialisiert und gehandhabt
 export const AuthProvider: FC<IAuthProvider> = ({ children }) => {
 	const [currentUser, setCurrentUser] = useState<User | null>(null);
 	const [loading, setLoading] = useState<Boolean>(true);

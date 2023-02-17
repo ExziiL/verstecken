@@ -14,6 +14,8 @@ const PlayingField: FC<IPlayingField> = () => {
 
 	const colorOptions = { color: 'black' };
 
+	// Die zwei Circle Komponente sind nur als veranschaulichung der Grenzen da, die später durch die Rectangle Komponente ersetzt werden sollen
+	// in der Datenbank sind das die "game/boundingBox/northWest" und "game/boundingBox/southEast (siehe Bilder in der Dokumentation)
 	return (
 		<>
 			{/* ---------------------- */}
