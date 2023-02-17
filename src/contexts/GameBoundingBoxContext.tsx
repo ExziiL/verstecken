@@ -21,7 +21,7 @@ export const GameBoundingBoxContext = createContext<IGameBoundingBoxContext>({
 } as IGameBoundingBoxContext);
 
 export const GameBoundingBoxProvider: FC<IGameBoundingBoxProvider> = ({ children }: any) => {
-	const [gameBoundingBoxCenter, setGameBoundingBoxCenter] = useState<any>([48.83852223540835, 10.07696360335071]);
+	const [gameBoundingBoxCenter, setGameBoundingBoxCenter] = useState<any>([48.84115285275322, 10.067394677015379]);
 
 	const database = getDatabase();
 	const gameRef = ref(database, 'game/');

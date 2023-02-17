@@ -1,4 +1,5 @@
 import { getDatabase, off, onValue, ref, set, update } from 'firebase/database';
+import { LatLngTuple } from 'leaflet';
 import { useContext, useEffect, useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { GameContext } from '../../contexts/GameContext';

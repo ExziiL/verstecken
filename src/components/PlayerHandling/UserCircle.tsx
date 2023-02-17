@@ -10,9 +10,10 @@ export interface IUserCircle {
 	isSearching: boolean;
 	latLongCoordinates: LatLngTuple;
 	outsideOfPlayingField: boolean;
+	isColliding: boolean;
 }
 
-const UserCircle: FC<IUserCircle> = ({ color, playerName, isSearching, outsideOfPlayingField, latLongCoordinates }) => {
+const UserCircle: FC<IUserCircle> = ({ color, playerName, isSearching, outsideOfPlayingField, latLongCoordinates, isColliding }) => {
 	const fillColor = { color: color };
 	const searchingColor = { color: 'red' };
 
@@ -23,14 +24,16 @@ const UserCircle: FC<IUserCircle> = ({ color, playerName, isSearching, outsideOf
 
 	// ------- update playerBoundingBox when playerLocation changes -------
 	useEffect(() => {
-		const width = 0.00029;
-		const height = 0.00019;
-		const lat = latLongCoordinates[0];
-		const long = latLongCoordinates[1];
-		const northWest: LatLngExpression = [lat + height / 2, long - width / 2];
-		const southEast: LatLngExpression = [lat - height / 2, long + width / 2];
-		const newPlayerBoundingBox: LatLngBoundsExpression = [northWest, southEast];
-		setPlayerBoundingBox(newPlayerBoundingBox);
+		if (latLongCoordinates) {
+			const width = 0.00029;
+			const height = 0.00019;
+			const lat = latLongCoordinates[0];
+			const long = latLongCoordinates[1];
+			const northWest: LatLngExpression = [lat + height / 2, long - width / 2];
+			const southEast: LatLngExpression = [lat - height / 2, long + width / 2];
+			const newPlayerBoundingBox: LatLngBoundsExpression = [northWest, southEast];
+			setPlayerBoundingBox(newPlayerBoundingBox);
+		}
 	}, [latLongCoordinates]);
 
 	return (
@@ -54,7 +57,7 @@ const UserCircle: FC<IUserCircle> = ({ color, playerName, isSearching, outsideOf
 			</Rectangle>
 			<Circle
 				center={latLongCoordinates as LatLngTuple}
-				pathOptions={outsideOfPlayingField ? { color: 'black' } : isSearching ? searchingColor : fillColor}
+				pathOptions={isColliding ? { color: 'yellow' } : outsideOfPlayingField ? { color: 'black' } : isSearching ? searchingColor : fillColor}
 				radius={10}
 				stroke={true}
 				opacity={0.5}

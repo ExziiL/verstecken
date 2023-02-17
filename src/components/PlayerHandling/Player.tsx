@@ -19,6 +19,10 @@ const Player = () => {
 	const allPlayersRef = ref(database, 'players/');
 	const currentPlayer = players.find((player: any) => player.id === currentUser?.uid);
 	const playerColors = ['blue', 'green', 'pink', 'yellow', 'purple', 'orange', 'black'];
+	const width = 0.000095;
+	const height = 0.00015;
+	const [playerNorthWest, setPlayerNorthWest] = useState<LatLngTuple>([0, 0]);
+	const [playerSouthEast, setPlayerSouthEast] = useState<LatLngTuple>([0, 0]);
 
 	/* ----------------------- add player to database and set color --------------------------- */
 	function trimUserEmail(email: string | null) {
@@ -39,6 +43,7 @@ const Player = () => {
 						latLongCoordinates: playerLocation,
 						colorIsSet: false,
 						outsideOfPlayingField: false,
+						isColliding: false,
 					});
 				}
 			});
@@ -88,31 +93,15 @@ const Player = () => {
 	}, [playerLocation, currentUser]);
 
 	/* ----------------------------------- update player location ---------------------------------------- */
-	const width = 0.000095;
-	const height = 0.00015;
 
-	const playerNorthWest: LatLngTuple = [playerLocation[0] + width, playerLocation[1] - height];
-	const playerSouthEast: LatLngTuple = [playerLocation[0] - width, playerLocation[1] + height];
-
+	// get player location and set it to local `playerLocation` variable
 	useEffect(() => {
 		const id: any = navigator.geolocation.watchPosition(
 			(position: any) => {
 				console.log('getting Location');
-
 				setPlayerLocation([position.coords.latitude, position.coords.longitude]);
-
-				if (currentPlayer && playerLocation[0] !== 0) {
-					update(playerIdRef, {
-						latLongCoordinates: playerLocation,
-						boundingBox: {
-							northWest: playerNorthWest,
-							southEast: playerSouthEast,
-						},
-					}).then(() => {});
-				}
 			},
 			(error) => {
-				//TODO bessere Errorausgabe in den Geoinf-Unterlagen
 				console.error(error);
 			}
 		);
@@ -122,7 +111,33 @@ const Player = () => {
 		return () => {
 			navigator.geolocation.clearWatch(watchId);
 		};
-	}, [playerLocation, currentUser]);
+	}, []);
+
+	useEffect(() => {
+		setPlayerNorthWest([playerLocation[0] + width, playerLocation[1] - height]);
+		setPlayerSouthEast([playerLocation[0] - width, playerLocation[1] + height]);
+	}, [playerLocation]);
+
+	// set player location in database
+	useEffect(() => {
+		if (currentPlayer && playerLocation[0] !== 0) {
+			update(playerIdRef, {
+				latLongCoordinates: playerLocation,
+				boundingBox: {
+					northWest: playerNorthWest,
+					southEast: playerSouthEast,
+				},
+			});
+		}
+	}, [playerLocation, playerNorthWest, playerSouthEast]);
+
+	useEffect(() => {
+		onValue(playerIdRef, (snapshot) => {
+			if (snapshot.val()) {
+				// setPlayerLocation(snapshot.val().latLongCoordinates);
+			}
+		});
+	}, [playerIdRef]);
 
 	// ----------- determine if player is outside of playing field ----------------
 	const { gameBoundingBoxNorthWest, gameBoundingBoxSouthEast } = useContext(GameBoundingBoxContext);
@@ -137,7 +152,42 @@ const Player = () => {
 				});
 			}
 		}
-	}, [gameBoundingBoxNorthWest, gameBoundingBoxSouthEast, playerLocation]);
+	}, [gameBoundingBoxNorthWest, gameBoundingBoxSouthEast, playerLocation, playerNorthWest, playerSouthEast]);
+
+	// --------- update player boundingBox when coordinates change ----------------
+	useEffect(() => {
+		if (currentPlayer && playerLocation[0] !== 0) {
+			update(playerIdRef, {
+				boundingBox: {
+					northWest: playerNorthWest,
+					southEast: playerSouthEast,
+				},
+			});
+		}
+	}, [playerLocation, playerNorthWest, playerSouthEast]);
+
+	// --------- determine if player is colliding with other players ----------------
+	useEffect(() => {
+		if (currentPlayer && playerLocation[0] !== 0) {
+			const isColliding = players.some((player: any) => {
+				if (player.id !== currentPlayer.id && player.boundingBox) {
+					const otherPlayerNorthWest = player.boundingBox.northWest;
+					const otherPlayerSouthEast = player.boundingBox.southEast;
+
+					return (
+						(otherPlayerNorthWest[1] < playerSouthEast[1] && otherPlayerNorthWest[0] > playerSouthEast[0] && otherPlayerNorthWest[0] < playerNorthWest[0] && otherPlayerNorthWest[1] > playerNorthWest[1]) ||
+						(otherPlayerNorthWest[1] < playerSouthEast[1] && playerNorthWest[0] > otherPlayerSouthEast[0] && playerSouthEast[0] < otherPlayerSouthEast[0] && playerNorthWest[1] < otherPlayerNorthWest[1]) ||
+						(playerNorthWest[1] < otherPlayerSouthEast[1] && otherPlayerNorthWest[0] > playerSouthEast[0] && otherPlayerSouthEast[0] < playerSouthEast[0] && playerSouthEast[1] > otherPlayerSouthEast[1]) ||
+						(playerNorthWest[1] < otherPlayerSouthEast[1] && playerNorthWest[0] > otherPlayerSouthEast[0] && otherPlayerSouthEast[1] < playerSouthEast[1] && otherPlayerSouthEast[0] > playerSouthEast[0])
+					);
+				}
+			});
+
+			update(playerIdRef, {
+				isColliding: isColliding,
+			});
+		}
+	}, [playerLocation, players, playerNorthWest, playerSouthEast]);
 
 	return (
 		<div>
@@ -149,6 +199,7 @@ const Player = () => {
 						isSearching={player.isSearching}
 						latLongCoordinates={player.latLongCoordinates}
 						outsideOfPlayingField={player.outsideOfPlayingField}
+						isColliding={player.isColliding}
 					/>
 				</div>
 			))}
